@@ -1,3 +1,5 @@
+import music21.chord
+
 from Note import Note
 
 
@@ -98,3 +100,28 @@ class MusicUtils:
                                   notesAtTime[i + 2],
                                   noteFreq,
                                   MusicUtils.getNoteColor(noteFreq)))
+
+    @staticmethod
+    def setupNotesForSongWithMusic21(notesFile, notes, notes_played):
+        for possibleChord in notesFile.flat.notes:
+            if type(possibleChord) is music21.chord.Chord:
+                myChord = []
+                for thisNote in possibleChord.notes:
+                    myChord.append(Note(thisNote.name, thisNote.octave,
+                                      thisNote.duration.quarterLength, thisNote.pitch.frequency,
+                                      MusicUtils.getNoteColor(thisNote.pitch.frequency)))
+                notes.append(myChord)
+            else:
+                notes.append(Note(possibleChord.name,possibleChord.octave,
+                                  possibleChord.duration.quarterLength,possibleChord.pitch.frequency,
+                                  MusicUtils.getNoteColor(possibleChord.pitch.frequency)))
+
+            # notesAtTime = line.split(',')
+            # for i in range(1, int(notesAtTime[0]) * 4, 4):
+            #     notes_played.append(notesAtTime[i - 1])
+            #     noteFreq = MusicUtils.getNoteFrequency(notesAtTime[i], notesAtTime[i + 1])
+            #     notes.append(Note(notesAtTime[i],
+            #                       notesAtTime[i + 1],
+            #                       notesAtTime[i + 2],
+            #                       noteFreq,
+            #                       MusicUtils.getNoteColor(noteFreq)))
