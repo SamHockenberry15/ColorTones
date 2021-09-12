@@ -13,7 +13,7 @@ def main():
     sizeOfImage = int(size*.35)
     myCanvas = np.zeros((size,size),dtype='uint8')
     myColorMap = np.zeros((size, size,3), dtype='uint8')
-    notesFile = converter.parse('Elton_John_-_Rocket_Man.mxl')
+    notesFile = converter.parse('music/mxlFiles/Elton_John_-_Rocket_Man.mxl')
     notesPlayed = []
     notes = []
     x = 0.0
