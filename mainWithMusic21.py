@@ -3,17 +3,27 @@ import random
 
 import numpy as np
 import cv2 as cv
-from Note import Note
 from MusicUtils import MusicUtils
 from Function import Function
 from music21 import *
+import argparse
 
 def main():
+    parser = argparse.ArgumentParser(description='Convert an .mxl file into a factal image')
+    parser.add_argument('mxlFile', metavar='mxlFile', type=str, nargs='+',
+                        help='a file for the program to analyze')
+    parser.add_argument('-s, --show', dest='show',
+                        action='store_true', default=False,
+                        help='State whether to show the fractal at the end of the program running')
+    args = parser.parse_args()
+
+    fileName = parseFileName(args.mxlFile[0])
+
     size = 2000
     sizeOfImage = int(size*.35)
     myCanvas = np.zeros((size,size),dtype='uint8')
     myColorMap = np.zeros((size, size,3), dtype='uint8')
-    notesFile = converter.parse('music/mxlFiles/Elton_John_-_Rocket_Man.mxl')
+    notesFile = converter.parse(args.mxlFile[0])
     notesPlayed = []
     notes = []
     x = 0.0
@@ -28,8 +38,6 @@ def main():
     noteIndex = 0
     beatCounter = 0
     for loopNote in notes:
-        # What I need: Take notes for music xml and turn into [ note, note, [note,note,note], note ]
-        # For each section in the notes take the notes played, make the functions, and provide them in the correct data structures
 
         if not isinstance(loopNote,list):
             notesPerBeat = 1
@@ -106,11 +114,19 @@ def main():
         functions = []
         beatCounter =  beatCounter + 1
         print(beatCounter)
-    cv.imwrite('savedImage2.jpg', myColorMap)
-    cv.imshow('Test', myColorMap)
+    cv.imwrite('music/createdImages/'+fileName+'.jpg', myColorMap)
+    print('Done!')
 
-    cv.waitKey(0)
+    if args.show:
+        cv.imshow('Window', myColorMap)
+        cv.waitKey(0)
 
+
+def parseFileName(curr_file_name):
+    character_to_split_on = '/' if '/' in curr_file_name else '\\'
+    myArray = curr_file_name.split(character_to_split_on)
+    adjustedFileName = myArray[len(myArray)-1][:-4]
+    return adjustedFileName
 
 
 # Press the green button in the gutter to run the script.
