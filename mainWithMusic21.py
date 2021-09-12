@@ -9,11 +9,11 @@ from Function import Function
 from music21 import *
 
 def main():
-    size = 1400
-    sizeOfImage = int(size*.45)
+    size = 2000
+    sizeOfImage = int(size*.35)
     myCanvas = np.zeros((size,size),dtype='uint8')
     myColorMap = np.zeros((size, size,3), dtype='uint8')
-    notesFile = converter.parse('Carol_of_the_Bells.mxl')
+    notesFile = converter.parse('Elton_John_-_Rocket_Man.mxl')
     notesPlayed = []
     notes = []
     x = 0.0
@@ -87,8 +87,8 @@ def main():
             x_star = r_star * math.cos(theta)
             y_star = r_star * math.sin(theta)
 
-            intx = int(x_star * (sizeOfImage*.9)) + int(size/2)
-            inty = int(y_star * (sizeOfImage*.9)) + int(size/2)
+            intx = int(x_star * (sizeOfImage*.7)) + int(size/2)
+            inty = int(y_star * (sizeOfImage*.7)) + int(size/2)
 
             if intx < size and intx >= 0 and inty < size and inty >= 0:
                 myCanvas[intx,inty] = myCanvas[intx,inty] + 1
