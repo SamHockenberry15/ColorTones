@@ -19,7 +19,7 @@ def main():
 
     fileName = parseFileName(args.mxlFile[0])
 
-    size = 2000
+    size = 1000
     sizeOfImage = int(size*.35)
     myCanvas = np.zeros((size,size),dtype='uint8')
     myColorMap = np.zeros((size, size,3), dtype='uint8')

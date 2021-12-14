@@ -24,7 +24,7 @@ def main():
     args = parser.parse_args()
 
     # Specify resolution
-    resolution = (1000, 1000)
+    resolution = (3000, 3000)
     # Specify video codec
     codec = cv.VideoWriter_fourcc(*"mp4v")
     # Specify name of Output file
@@ -37,8 +37,8 @@ def main():
 
     fileName = parseFileName(args.mxlFile[0])
 
-    size = 1000
-    sizeOfImage = int(size*.65)
+    size = 3000
+    sizeOfImage = int(size*.45)
     myCanvas = np.zeros((size,size),dtype='uint8')
     myColorMap = np.zeros((size, size,3), dtype='uint8')
     notesFile = converter.parse(args.mxlFile[0])
@@ -54,7 +54,6 @@ def main():
 
     MusicUtils.setupNotesForSongWithMusic21(notesFile, notes, notesPlayed)
 
-    noteIndex = 0
     beatCounter = 0
     for loopNote in notes:
 
@@ -66,9 +65,9 @@ def main():
         currThetaVals = []
         functions = []
 
-        noteIndex = noteIndex + int(notesPerBeat)
-
-        r = random.randint(0, 600) / 1000 + .05
+        # determines how wide initial vals can move from x-axis
+        rand = random.randint(0,600)
+        r = (rand / 600) + .05
 
         if notesPerBeat == 1:
             currThetaVals.append((loopNote.freq * math.pi / 180.0) * 5)
@@ -76,13 +75,14 @@ def main():
             for note in loopNote:
                 currThetaVals.append((note.freq * math.pi / 180.0) * 5)
 
-        for i in range(0, len(currThetaVals)):
-            val = currThetaVals[i]
+        for j in range(0, len(currThetaVals)):
+            val = currThetaVals[j]
+            #why .7 ?
+            #Function here is for circles; if you adjust the +/- of the variables, the image changes
             functions.append(
                 Function(r * math.cos(val), -r * math.sin(val), .7, r * math.sin(val), r * math.cos(val), .7,
-                         loopNote.color if notesPerBeat == 1 else loopNote[i].color))
+                         loopNote.color if notesPerBeat == 1 else loopNote[j].color))
 
-        notesPlayedIndex = 0
         for i in range(0, 10000):
             tx = x
             ty = y
@@ -90,6 +90,7 @@ def main():
             rndInt = random.randint(0,notesPerBeat)
 
             if(rndInt < len(functions)):
+                #ax + by + c = x | y
                 x = functions[rndInt].val1 * tx + functions[rndInt].val2 * ty + functions[rndInt].val3
                 y = functions[rndInt].val4 * tx + functions[rndInt].val5 * ty + functions[rndInt].val6
                 tempCol = functions[rndInt].color
@@ -100,10 +101,11 @@ def main():
 
             rad = math.sqrt(x*x + y*y)
 
-            # Figure out what this does
+            # Determines thickness of annuli
             if i % 2000 == 0:
-                r_star=(rad+beatCounter) / 450
+                r_star=(rad+beatCounter) / 250
 
+            #Required for always positive radii
             if x < 0:
                 r_star = r_star * -1
 
@@ -135,21 +137,20 @@ def main():
             cv.imshow('Window', myColorMap)
             cv.waitKey(10)
 
-        currThetaVals = []
-        functions = []
-        beatCounter =  beatCounter + 1
+
+        beatCounter =  beatCounter + notesPerBeat
         print(beatCounter)
     out.release()
     cv.imwrite('music/createdImages/'+fileName+'.jpg', myColorMap)
-
-
-    imageio.mimsave('movie.gif', image_gif, duration=.015 )
-
-
-    mq.run(words = 'https://www.topcoder.com', version = 1,
-           picture = 'movie.gif',
-           colorized = True,
-           save_name = 'myQRCode.gif')
+    #
+    #
+    # imageio.mimsave('movie.gif', image_gif, duration=.015 )
+    #
+    #
+    # mq.run(words = 'https://www.topcoder.com', version = 1,
+    #        picture = 'movie.gif',
+    #        colorized = True,
+    #        save_name = 'myQRCode.gif')
 
 
     print('Done!')

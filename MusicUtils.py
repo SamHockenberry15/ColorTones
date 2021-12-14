@@ -107,12 +107,14 @@ class MusicUtils:
             if type(possibleChord) is music21.chord.Chord:
                 myChord = []
                 for thisNote in possibleChord.notes:
-                    myChord.append(Note(thisNote.name, thisNote.octave,
+                    if hasattr(thisNote,"name"):
+                        myChord.append(Note(thisNote.name, thisNote.octave,
                                       thisNote.duration.quarterLength, thisNote.pitch.frequency,
                                       MusicUtils.getNoteColor(thisNote.pitch.frequency)))
                 notes.append(myChord)
             else:
-                notes.append(Note(possibleChord.name,possibleChord.octave,
+                if hasattr(possibleChord,"name"):
+                    notes.append(Note(possibleChord.name,possibleChord.octave,
                                   possibleChord.duration.quarterLength,possibleChord.pitch.frequency,
                                   MusicUtils.getNoteColor(possibleChord.pitch.frequency)))
 
